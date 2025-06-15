@@ -1,0 +1,199 @@
+ROS2:
+	Nodes: Các đơn vị thực thi chương trình độc lập. Mỗi node thực hiện một chức năng cụ thể của robot
+	Topics:  Cơ chế giao tiếp Publish/Subscribe (Xuất bản/Đăng ký) giữa các node. 
+			 Một node có thể xuất bản dữ liệu lên một topic, và các node khác có thể đăng ký để nhận dữ liệu từ topic đó
+	Actions: Cơ chế giao tiếp dài hạn hơn Services, cho phép các node gửi một mục tiêu và nhận thông báo về tiến độ, 
+			 cũng như khả năng hủy bỏ mục tiêu
+	Parameters: Cho phép cấu hình các giá trị có thể thay đổi của các node trong quá trình chạy.
+	Launch files: Được sử dụng để khởi chạy nhiều node và cấu hình chúng một cách tự động
+	DDS (Data Distribute Service): Là phần mềm trung gian (middleware) mà ROS2 sử dụng để truyền dữ liệu
+
+
+Topics: 
+		- Publish/ Subscribe
+		- Cach hoat dong: 
+			+, Publisher: Một node (Publisher) sẽ xuất bản dữ liệu lên một topic cụ thể. 
+						  Dữ liệu này được gọi là message
+			+, Subscribe: Các node khác (Subscriber) quan tâm đến loại dữ liệu đó sẽ đăng ký nhận thông tin từ cùng một topic
+			+, DDS trung gian: 
+			+, Không đồng bộ
+			+, Luồng dữ liệu liên tục
+Services: 
+		- là cơ chế giao tiếp Request/Reply đồng bộ
+		- Cach hoat dong:
+			+, Server: Một node cung cấp một service cụ thể. Nó sẽ chờ đợi các yêu cầu đến.
+			+, Client: Một node khác (Client) sẽ gửi một request (yêu cầu) đến service của Server.
+			+, Đồng bộ: Client sẽ bị chặn (tạm dừng) cho đến khi Server xử lý yêu cầu và gửi lại reply (phản hồi).
+			+, Các cặp Request/Reply: Mỗi service có một định nghĩa riêng về cấu trúc của request và reply
+
+Actions: 
+		- là cơ chế giao tiếp phức tạp hơn, kết hợp các đặc điểm của Topics và Services. 
+		  Nó được sử dụng cho các tác vụ dài hạn, có thể bị hủy bỏ, và cần phản hồi về tiến độ
+		- Cach hoat dong:
+			+, Goal: Client sent a goal to server 
+			+, Feedback: Trong khi Server đang thực hiện goal, nó có thể gửi các feedback liên tục về tiến độ cho Client
+			+, Result: Khi Server hoàn thành goal, nó sẽ gửi một result (kết quả cuối cùng) cho Client.
+			+, Hủy bỏ
+			+, Không đồng bộ từ phía Client
+
+Data Distribute Service (DDS) 
+		- Phát hiện động: Các node không cần biết vị trí hay địa chỉ IP của nhau. 
+						  DDS tự động phát hiện và kết nối các node trên mạng.
+
+Message: data types such as int, float and boolean 
+		
+Colcon (build tool):
+		- No được thiết kế để biên dịch (compile) và quản lý các workspace chứa nhiều package ROS 2
+		- colcon build 
+			colcon build --packages-select <package_name>
+			colcon build --symlink-install 
+		- colcon test 
+		- colcon test-result 
+		- colcon clean
+
+
+URDF File: 
+	Một file mô hình mô tả toàn bộ các yếu tố của robot, bao gồm link (khối liên kết), joint (khớp nối), 
+		các tham số động học (kinematics parameters), các tham số động lực học (dynamics parameters), 
+		các mô hình trực quan (visual models) và các mô hình phát hiện va chạm (collision detection models).
+
+SRV File: 
+	Nó được lưu trữ trong thư mục srv dùng để định nghĩa các thông điệp dịch vụ ROS (ROS service messages), 
+		bao gồm hai phần: yêu cầu (request) và phản hồi (respond). Yêu cầu và phản hồi được phân tách bằng ký hiệu "---".
+
+
+MSG File: 
+	Nó được lưu trữ trong thư mục msg dùng để định nghĩa các thông điệp topic ROS (ROS topic messages).
+
+package.xml: 
+	Mô tả các thuộc tính của gói (package attributes), 
+		bao gồm tên gói (package name), số phiên bản (version number), tác giả (authorship) và các thông tin khác.
+
+Launch: 
+	Các file launch chứa các hướng dẫn toàn hệ thống để khởi chạy các node và dịch vụ cần thiết cho robot hoạt động.
+
+source /opt/ros/jazzy/setup.bash
+ros2 
+	pkg create
+	run <package_name> <node_name>
+	node 
+		list 
+		info 
+	topic 
+		list 
+		info
+		type: view the type of topic messages
+		find: find the topics related to a specific message type
+		hz: display the average publishing frequency of a topic
+		bw: calculate the bandwidth usage of a specific topic
+		delay: cal the message delay using the timestamp
+		echo: display the topic message in console 
+		pub: publish a message to a specific topic through command-line
+
+	interface
+		list 
+		package: list the child interfaces within the specific package
+		packages: list packages containing interfaces 
+		show: display the detailed contents of the specified interface
+		proto: display message module 
+
+
+tree -L 1: xem bo cuc trong folder (install tree) 
+
+
+
+
+
+~/ros2_ws/    # Workspace chính
+├── src/      # Nơi chứa tất cả các ROS2 packages
+│   ├── my_robot_controller/
+│   ├── my_robot_navigation/
+│   └── my_custom_msgs/
+├── install/  # Chứa các file đã được build và cài đặt
+├── log/      # Chứa các file log
+└── build/    # Chứa các file tạm trong quá trình buit
+
+
+my_robot_controller/
+├── CMakeLists.txt        # Dành cho package C++
+├── package.xml           # Thông tin package và dependency
+├── src/                  # Chứa mã nguồn C++ hoặc Python
+│   ├── control_node.cpp
+│   └── arm_controller.py
+├── include/my_robot_controller/ # Headers C++
+├── launch/               # Chứa các file launch (XML, YAML, Python)
+│   └── robot_bringup.launch.py
+├── config/               # Chứa các file cấu hình (YAML)
+│   └── parameters.yaml
+└── rclpy_parameters_example/ # Nếu là package Python, thường có thư mục con này
+    ├── __init__.py
+    └── my_node.py
+
+
+package.xml: Mô tả metadata của package
+
+colcon build
+	-> source install/setup.bash
+	-> ros2 run <name_workspace> <name_node>
+
+
+rclpy: dung de viet Node
+v4l2-ctl --list-formats-ext: xem phan cung 
+
+
+pkill -f <ten_executable>
+
+
+
+
+
+
+
+
+1 node - 1 action
+
+Main module 
+1. Navigation (Dieu huong) 
+2. Perception (Nhan thuc)
+3. Planning (Lap ke hoach)
+4. Control (Dieu khien) 
+5. Communication (Giao tiep)
+6. User interface (Giao dien nguoi dung)
+
+ROS2 
+- ros2_control: giao tiep voi cac thiet bi truyen dong (actuators) va cam bien (sensors)
+- navigation2 (nav2) 
+	+, AMCL (Adaptive Monte Carlo Localization) 
+	+, SLAM Toolbox/ Cartographer: De tao ban do moi truong (mapping) 
+dong thoi dinh vi (localization) 
+	+, Global Planner & Local Planner: Tao lo trinh tong le va dieu chinh lo trinh cuc bo 
+	+, Costmap: bieu dien cac chuong ngai vat trong moi truong  
+
+- perception:
+    image_pipeline: xu li du lieu tu camera
+    image_transport: truyen tai anh hieu qua 
+    vision_opencv: tich hop opencv 
+    tensorflow: tich hop qua TensorRT or OpenVINO
+
+- control: 
+    Tu viet node de tinh toan lenh dieu khien 
+    Node giao tiep phan cung xe (serial, CAN Bus, .. )
+- robot_state_publisher: 
+- tf2 
+- rvizz2 
+
+
+#package 
+car_perception: 
+	image_preprocessing_node,
+	unet_inference_node,
+	perception_node
+
+car_control:
+	decision_making_node
+
+car_interface:
+	can_bus_interface_node
+
+astra_camera_driver:
+	can_bus_interface_node
